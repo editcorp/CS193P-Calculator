@@ -27,6 +27,9 @@ class ViewController: UIViewController {
         } else {
             display.text = digit
             userIsInTheMiddleOfTyping = true
+            if brain.resultIsPending == false {
+                brain.description = nil
+            }
         }
     }
     

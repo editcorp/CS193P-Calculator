@@ -47,12 +47,12 @@ struct CalculatorBrain {
             sixDigitFormatter.numberStyle = .decimal
             sixDigitFormatter.minimumFractionDigits = 0
             sixDigitFormatter.maximumFractionDigits = 6
-
+            
             // Perform the appropriate logic based on the button that was pressed.
             switch operation {
             case .constant(let value):
                 accumulator = value
-                if _description != nil {
+                if _resultIsPending == true && _description != nil {
                     _description = _description! + " " + symbol
                 } else {
                     _description = symbol
@@ -103,6 +103,11 @@ struct CalculatorBrain {
 
             case .randomValue:
                 performCreateRandomValue()
+                if _resultIsPending == true && _description != nil {
+                    _description = _description! + " " + sixDigitFormatter.string(from: NSNumber(value: accumulator!))!
+                } else {
+                    _description = sixDigitFormatter.string(from: NSNumber(value: accumulator!))!
+                }
                 _priorOperation = "randomValue"
 
             }
@@ -112,6 +117,7 @@ struct CalculatorBrain {
     private mutating func performPendingBinaryOperation() {
         if pendingBinaryOperation != nil && accumulator != nil {
             accumulator = pendingBinaryOperation!.perform(with: accumulator!)
+            pendingBinaryOperation = nil
         }
     }
     
@@ -154,6 +160,9 @@ struct CalculatorBrain {
     var description: String? {
         get {
             return _description
+        }
+        set {
+            _description = newValue
         }
     }
     
